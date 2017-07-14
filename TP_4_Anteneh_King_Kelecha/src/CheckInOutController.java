@@ -81,6 +81,9 @@ public class CheckInOutController
 				// create log record
 				newEvent.createMarkHoldLog(copyOnHold, newHold, activePatron);
 
+				// Attach fine with the hold
+				applyFine(activePatron, newHold);
+
 				return true;
 			}
 			else
@@ -91,6 +94,25 @@ public class CheckInOutController
 		else
 		{
 			return false;
+		}
+
+	}
+
+	private void applyFine(Patron activePatron, Hold newHold)
+	{
+		Fine newFine = new Fine();
+
+		if (newHold.getHoldType().equalsIgnoreCase("Damage"))
+		{
+			newFine.applyDamageFee(activePatron);
+		}
+		else if (newHold.getHoldType().equalsIgnoreCase("Book Dumping"))
+		{
+			newFine.applyDumpingFee(activePatron);
+		}
+		else
+		{
+			newFine.applyOverDueFee(activePatron);
 		}
 
 	}
@@ -233,6 +255,24 @@ public class CheckInOutController
 							"Book is not returned on time", "overdue");
 				}
 			}
+		}
+
+	}
+
+	public boolean isFeePaid(Patron activePatron)
+	{
+		// code to automatically call payment whenever a worker try to remove a
+		// hold
+
+		// check if fee is paid
+		if (FakeDB.getFineStore().get(activePatron) == 0)
+		{
+
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 
 	}

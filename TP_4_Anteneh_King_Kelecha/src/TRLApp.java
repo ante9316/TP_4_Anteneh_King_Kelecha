@@ -22,15 +22,23 @@ public class TRLApp
 		{
 
 			String userInput;
-			StdOut.println("\n*************** Main Menu*****************");
-			StdOut.println("*  Press 1 : To CHECK OUT Books\t\t *");
-			StdOut.println("*  Press 2 : To CHECK IN Books\t\t *");
-			StdOut.println("*  Press 3 : To See HOW to Run the App\t *");
-			StdOut.println("*  Press 4 : To See EVENT Log    \t *");
-			StdOut.println("*  Press 5 : To Mark HOLDS on Students  *");
-			StdOut.println("*  Press 6 : To Remove HOLDS from Students*");
-			StdOut.println("*  Press 0 : To EXIT the Application\t *");
-			StdOut.println("******************************************\n");
+			StdOut.println("\n*************** Main Menu*******************");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 1 : To CHECK OUT Books\t\t   *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 2 : To CHECK IN Books\t\t   *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 3 : To See HOW to Run the App\t   *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 4 : To See EVENT Log    \t   *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 5 : To Mark HOLDS on Students     *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 6 : To Remove HOLDS from Students *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 0 : To EXIT the Application\t   *");
+			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("********************************************\n");
 
 			Map<Copy, ArrayList<Hold>> holdRecord = new HashMap<Copy, ArrayList<Hold>>();
 			userInput = StdIn.readLine();
@@ -218,7 +226,9 @@ public class TRLApp
 
 				StdOut.println(
 						"\n**** Library Policies ****\nA Copy is due after 120 days from the date it is checked out.\n\nIf there is a hold on your account, a worker can only remove the hold when the fine is paid");
-				// Explain..other assumptions
+
+				StdOut.println(
+						"\n\n** ASSUMPTION: fees are automatically considered as paid when worker try to remove hold **");
 				notValidChoice = true;
 
 			}
@@ -284,10 +294,19 @@ public class TRLApp
 
 			else if (userInput.equals("6"))
 			{
-				// Check if the fee is paid
-				// Remove the record from FakeDB.getHoldStore()
+				// Accept and validate patron info
+				Patron activePatron = validatePatron(trlApp.controller);
 
-				// CHeck why a hold is removed when patron check a book in
+				// Check if the fee is paid and remove hold record
+				if (trlApp.controller.isFeePaid(activePatron))
+				{
+
+				}
+				else
+				{
+					StdOut.println("\n** Fine is not paid! Please go back and pay the fine **");
+				}
+
 				notValidChoice = true;
 
 			}

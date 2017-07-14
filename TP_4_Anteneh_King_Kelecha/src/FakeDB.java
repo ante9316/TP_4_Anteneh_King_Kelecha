@@ -8,11 +8,13 @@ public class FakeDB
 	private static Map<String, Patron> patronStore;
 	private static Map<String, Copy> copyStore;
 	private static Map<Copy, ArrayList<Hold>> holdStore;
+	protected static Map<Patron, Double> fineStore;
 
 	static // the following runs once when class is loaded: "static initializer"
 	{
 		patronStore = new HashMap<String, Patron>();
 		copyStore = new HashMap<String, Copy>();
+		fineStore = new HashMap<Patron, Double>();
 
 		patronStore.put("P1", new Patron("P1", "Eric"));
 		patronStore.put("P2", new Patron("P2", "Ash"));
@@ -25,6 +27,11 @@ public class FakeDB
 
 		holdStore = new HashMap<Copy, ArrayList<Hold>>();
 
+	}
+
+	protected static Map<Patron, Double> getFineStore()
+	{
+		return fineStore;
 	}
 
 	public static Map<String, Patron> getPatronStore()
