@@ -290,5 +290,8 @@ public class CheckInOutController
 			}
 
 		}
+
+		// create event log record
+		newEvent.createRemoveHoldLog(activeCopy);
 	}
 }

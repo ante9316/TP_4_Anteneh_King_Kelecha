@@ -69,4 +69,14 @@ public class Event
 		return alleventDetail;
 	}
 
+	public void createRemoveHoldLog(Copy activeCopy)
+	{
+		LocalDateTime now = LocalDateTime.now();
+		String tempLog = "\nA hold has been removed against a copy titled: " + activeCopy.getTitle() + " ( "
+				+ activeCopy.getCopyID() + " ) " + " at : " + dateFormat.format(now) + "\n";
+
+		alleventDetail.add(tempLog);
+
+	}
+
 }

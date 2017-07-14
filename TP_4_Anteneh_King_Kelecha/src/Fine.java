@@ -42,6 +42,8 @@ public class Fine
 	public void payment(Patron activePatron)
 	{
 		FakeDB.getFineStore().get(activePatron).fee = 0.0;
-		// OUT OF SCOPE
+
+		// OUT OF SCOPE , fee is paid for now
+		// TODO: Log payment event
 	}
 }
