@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class TRLApp
 {
+	private static CheckInOutController controller = new CheckInOutController();
 
 	public static void main(String[] args) throws InterruptedException
 	{
@@ -22,16 +23,15 @@ public class TRLApp
 
 			String userInput;
 			StdOut.println("\n*************** Main Menu*****************");
-			StdOut.println("*  Press 1 : To Check Out Books\t\t *");
-			StdOut.println("*  Press 2 : To Check In Books\t\t *");
-			StdOut.println("*  Press 3 : To See How to Run the App\t *");
-			StdOut.println("*  Press 4 : To See Event Log    \t *");
-			StdOut.println("*  Press 5 : To Mark a HOLD on Students  *");
-			StdOut.println("*  Press 6 : To Remove a HOLD on Students*");
-			StdOut.println("*  Press 0 : To Exit the Application\t *");
+			StdOut.println("*  Press 1 : To CHECK OUT Books\t\t *");
+			StdOut.println("*  Press 2 : To CHECK IN Books\t\t *");
+			StdOut.println("*  Press 3 : To See HOW to Run the App\t *");
+			StdOut.println("*  Press 4 : To See EVENT Log    \t *");
+			StdOut.println("*  Press 5 : To Mark HOLDS on Students  *");
+			StdOut.println("*  Press 6 : To Remove HOLDS from Students*");
+			StdOut.println("*  Press 0 : To EXIT the Application\t *");
 			StdOut.println("******************************************\n");
 
-			CheckInOutController newTransaction = new CheckInOutController();
 			Map<Copy, ArrayList<Hold>> holdRecord = new HashMap<Copy, ArrayList<Hold>>();
 			userInput = StdIn.readLine();
 			if (userInput.equals("1"))
@@ -40,16 +40,16 @@ public class TRLApp
 				StdOut.println("\t~~~~Copy Check Out Session~~~~");
 
 				// validate patron
-				Patron activePatron = validatePatron(newTransaction);
+				Patron activePatron = validatePatron(controller);
 
 				// print current patron record
 				StdOut.println("\nCurrent Patron's Record:");
 
-				StdOut.println(newTransaction.printPatronRecord(activePatron));
+				StdOut.println(controller.printPatronRecord(activePatron));
 
 				StdOut.println("\nChecked Out Copies So Far: ");
 				String copiesCheckedOut;
-				copiesCheckedOut = newTransaction.printCheckedOutCopies(activePatron);
+				copiesCheckedOut = controller.printCheckedOutCopies(activePatron);
 
 				if (copiesCheckedOut != null)
 				{
@@ -63,7 +63,7 @@ public class TRLApp
 				// Check and display Hold info on Patron (if any)
 				StdOut.println("\nHOLD on this account : ");
 
-				holdRecord = newTransaction.checkHoldsRecord(activePatron);
+				holdRecord = controller.checkHoldsRecord(activePatron);
 
 				if (holdRecord != null && !holdRecord.isEmpty())
 				{
@@ -85,11 +85,11 @@ public class TRLApp
 				{
 					// validate Copies exist
 					StdOut.println("\nPlease Scan a Copy to Check Out: ");
-					Copy activeCopy = validateCopies(newTransaction);
+					Copy activeCopy = validateCopies(controller);
 
 					// Check if the copy is already checked OUT by another
 					// Patron
-					String checkedOutTo = newTransaction.isCopyCheckedOut(activeCopy);
+					String checkedOutTo = controller.isCopyCheckedOut(activeCopy);
 					if (checkedOutTo != null)
 					{
 						StdOut.println("\nSorry, this book is already checked out by: " + checkedOutTo);
@@ -99,7 +99,7 @@ public class TRLApp
 						StdOut.println("Checking Out. Please wait..");
 						Thread.sleep(500);
 
-						newTransaction.checkOut(activePatron, activeCopy);
+						controller.checkOut(activePatron, activeCopy);
 
 						StdOut.println("\nCopies Checked Out Successfuly!");
 						notValidChoice = true;
@@ -127,16 +127,16 @@ public class TRLApp
 
 				StdOut.println("\t~~~~Copy Check IN Session~~~~");
 
-				Patron activePatron = validatePatron(newTransaction);
+				Patron activePatron = validatePatron(controller);
 
-				newTransaction.printPatronRecord(activePatron);
+				controller.printPatronRecord(activePatron);
 
 				boolean nextCheckOut = false;
 
 				do
 				{
 					StdOut.println("\nPlease Scan a Copy to Check In: ");
-					Copy activeCopy = validateCopies(newTransaction);
+					Copy activeCopy = validateCopies(controller);
 
 					// Check if the copy is already checked OUT by any Patron
 					if (activeCopy.getOutTo() != null)
@@ -154,7 +154,7 @@ public class TRLApp
 							StdOut.println("\nChecking In. Please wait...");
 							Thread.sleep(500);
 
-							newTransaction.checkIn(activePatron, activeCopy);
+							controller.checkIn(activePatron, activeCopy);
 
 							StdOut.println("\nCopies Checked In Successfuly!");
 							notValidChoice = true;
@@ -188,7 +188,7 @@ public class TRLApp
 
 				StdOut.println("List of available Patrons in the System:");
 
-				Map<String, Patron> tempPatronStore = newTransaction.printAllPatrons();
+				Map<String, Patron> tempPatronStore = controller.printAllPatrons();
 				for (String key : tempPatronStore.keySet())
 				{
 					System.out.println(
@@ -196,14 +196,14 @@ public class TRLApp
 				}
 				StdOut.println("\nList of available Copies in the System:");
 
-				Map<String, Copy> tempCopyStore = newTransaction.printAllCopies();
+				Map<String, Copy> tempCopyStore = controller.printAllCopies();
 				for (String key : tempCopyStore.keySet())
 				{
 					System.out.println(tempCopyStore.get(key).getCopyID() + " , " + tempCopyStore.get(key).getTitle());
 				}
 
 				StdOut.println("\nList of HOLDS in the System:");
-				holdRecord = newTransaction.checkHoldsRecord();
+				holdRecord = controller.checkHoldsRecord();
 
 				if (holdRecord != null && !holdRecord.isEmpty())
 				{
@@ -226,7 +226,7 @@ public class TRLApp
 			{
 				StdOut.println("\t~~~~Event Log~~~~");
 
-				ArrayList<String> tempEventLog = newTransaction.printEventLog();
+				ArrayList<String> tempEventLog = controller.printEventLog();
 				if (tempEventLog.isEmpty())
 				{
 					StdOut.println("There is no Event Log at this time. Exiting the application...");
@@ -247,14 +247,14 @@ public class TRLApp
 								+ "Please Enter the Copy ID :");
 
 				// Mark hold on all patron with overdue copies
-				newTransaction.markHoldOnOverDueCopies();
+				controller.markHoldOnOverDueCopies();
 
 				// validate copies
-				Copy activeCopy = validateCopies(newTransaction);
+				Copy activeCopy = validateCopies(controller);
 
 				StdOut.println("Please select the type of hold to mark:");
 
-				String[] tempHoldType = newTransaction.getTypeOfHold();
+				String[] tempHoldType = controller.getTypeOfHold();
 
 				for (int i = 0; i < tempHoldType.length; i++)
 				{
@@ -266,7 +266,7 @@ public class TRLApp
 				StdOut.println("Please write a description or type \"None\"");
 				String description = StdIn.readLine();
 
-				if (newTransaction.markHold(activeCopy, holdType, description))
+				if (controller.markHold(activeCopy, holdType, description))
 				{
 					StdOut.print("A hold has been marked sucessfully!");
 				}
@@ -280,7 +280,10 @@ public class TRLApp
 
 			else if (userInput.equals("6"))
 			{
-				StdOut.println("This functionality is not implmented yet");
+				// Check if the fee is paid
+				// Remove the record from FakeDB.getHoldStore()
+
+				// CHeck why a hold is removed when patron check a book in
 				notValidChoice = true;
 
 			}
@@ -310,7 +313,7 @@ public class TRLApp
 			for (int i = 0; i < holdRecord.get(key).size(); i++)
 			{
 				StdOut.println("There is a \"" + holdRecord.get(key).get(i).getHoldType() + "\" hold against a copy of "
-						+ key.getTitle() + " (" + key.getCopyID() + ") and was checked out by"
+						+ key.getTitle() + " (" + key.getCopyID() + ") and was checked out by "
 						+ key.getOutTo().getName() + " (" + key.getOutTo().getPatronID() + ")");
 			}
 
@@ -318,18 +321,18 @@ public class TRLApp
 
 	}
 
-	protected static Copy validateCopies(CheckInOutController newTransaction)
+	protected static Copy validateCopies(CheckInOutController controller)
 	{
 		boolean notValidID = true;
 		Copy activeCopy;
 		do
 		{
-			activeCopy = newTransaction.createCopy();
+			activeCopy = controller.createCopy();
 
 			String newCopyID = StdIn.readLine().toUpperCase();
 
 			// Check if the entered Copy is in the DB
-			activeCopy = newTransaction.checkCopyExist(newCopyID);
+			activeCopy = controller.checkCopyExist(newCopyID);
 			if (activeCopy == null)
 			{
 				StdOut.println("You may have scanned an invalid copy or unavailable copy. Please try again:");
@@ -345,19 +348,19 @@ public class TRLApp
 		return activeCopy;
 	}
 
-	protected static Patron validatePatron(CheckInOutController newTransaction)
+	protected static Patron validatePatron(CheckInOutController controller)
 	{
 		boolean notValidID = true;
 		Patron activePatron;
 
-		activePatron = newTransaction.createPatron();
+		activePatron = controller.createPatron();
 		StdOut.println("Please enter the patron ID:");
 		do
 		{
 			String newPatronID = StdIn.readLine().toUpperCase();
 
 			// Check if the entered patron is in the DB
-			activePatron = newTransaction.checkPatronExist(newPatronID);
+			activePatron = controller.checkPatronExist(newPatronID);
 
 			if (activePatron == null)
 			{

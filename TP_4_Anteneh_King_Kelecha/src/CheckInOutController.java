@@ -85,19 +85,6 @@ public class CheckInOutController
 		}
 	}
 
-	public void printAllHolds()
-	{
-		if (FakeDB.getHoldStore().isEmpty())
-			StdOut.println("\n***There is NO HOLD on the System***");
-		else
-		{
-			// TODO:
-
-			// implement getAllHolds();
-		}
-
-	}
-
 	// Check if there is any hold in the system
 	public Map<Copy, ArrayList<Hold>> checkHoldsRecord()
 	{

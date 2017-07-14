@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class Event
 {
-	private static Map<Object, Object> eventBYCopy;
+	private static Map<Object, Object> eventByCopy;
 	private static ArrayList<String> alleventDetail = new ArrayList<String>();
 	static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 	static
 	{
-		eventBYCopy = new HashMap<Object, Object>();
+		eventByCopy = new HashMap<Object, Object>();
 
 	}
 
@@ -25,7 +25,7 @@ public class Event
 
 		alleventDetail.add(tempLog);
 
-		eventBYCopy.put(currentCopy, tempLog);
+		eventByCopy.put(currentCopy, tempLog);
 	}
 
 	public static void createCheckInLog(Copy currentCopy)
@@ -37,7 +37,7 @@ public class Event
 
 		alleventDetail.add(tempLog);
 
-		eventBYCopy.put(currentCopy, tempLog);
+		eventByCopy.put(currentCopy, tempLog);
 
 	}
 
@@ -50,7 +50,7 @@ public class Event
 
 		alleventDetail.add(tempLog);
 
-		eventBYCopy.put(copyOnHold, tempLog);
+		eventByCopy.put(copyOnHold, tempLog);
 	}
 
 	public static ArrayList<String> getEventLogs()

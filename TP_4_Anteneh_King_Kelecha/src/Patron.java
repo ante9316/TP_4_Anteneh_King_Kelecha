@@ -6,6 +6,7 @@ public class Patron
 	private String name;
 	private String patronID;
 	private ArrayList<Copy> copiesStillOut;
+	// private Hold patronOnHold;
 
 	public Patron(String id, String name)
 	{
