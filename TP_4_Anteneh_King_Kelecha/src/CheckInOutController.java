@@ -60,22 +60,22 @@ public class CheckInOutController
 
 	}
 
-	public boolean markHold(Copy activeCopy, String typeOfHold, String reason)
+	public boolean markHold(Copy copyOnHold, String typeOfHold, String reason)
 	{
 		// Check if the copy ever checked out. If never checked out, no hold can
 		// be applied
-		if (activeCopy.getOutTo() != null)
+		if (copyOnHold.getOutTo() != null)
 		{
 			// Create new hold
 			Hold newHold = new Hold(reason, typeOfHold);
 
-			activeCopy.setHoldTobeAdded(newHold);
+			copyOnHold.setHoldTobeAdded(newHold);
 
 			// Save this to a DB
-			FakeDB.setPatronHolds(activeCopy, activeCopy.getHoldTobeAdded());
+			FakeDB.setPatronHolds(copyOnHold, copyOnHold.getHoldTobeAdded());
 
 			// create log record
-			// Event.createMarkHoldLog(activeCopy, newHold);
+			Event.createMarkHoldLog(copyOnHold, newHold);
 
 			return true;
 		}

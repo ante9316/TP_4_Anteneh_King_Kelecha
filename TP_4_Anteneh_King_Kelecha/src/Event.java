@@ -6,20 +6,14 @@ import java.util.Map;
 
 public class Event
 {
-	private static Map<Object, Object> eventLogs;
-	private static ArrayList<String> checkOutHistory = new ArrayList<String>();
+	private static Map<Object, Object> eventBYCopy;
+	private static ArrayList<String> alleventDetail = new ArrayList<String>();
 	static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 	static
 	{
-		eventLogs = new HashMap<Object, Object>();
+		eventBYCopy = new HashMap<Object, Object>();
 
 	}
-
-	/*
-	 * public Event(Copy copyToCheckOut) { this.eventLogs.put(copyToCheckOut,
-	 * this.createCheckOutLog(copyToCheckOut)); //
-	 * this.createEventLog(this.events.get(activePatron)); }
-	 */
 
 	public static void createCheckOutLog(Copy currentCopy, LocalDateTime now)
 	{
@@ -29,9 +23,9 @@ public class Event
 				+ currentCopy.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now)
 				+ " with a DUE DATE of 120 days: " + dateFormat.format(currentCopy.getDueDate()) + "\n";
 
-		checkOutHistory.add(tempLog);
+		alleventDetail.add(tempLog);
 
-		eventLogs.put(currentCopy, tempLog);
+		eventBYCopy.put(currentCopy, tempLog);
 	}
 
 	public static void createCheckInLog(Copy currentCopy)
@@ -41,28 +35,27 @@ public class Event
 				+ " ) has been checked in by: " + currentCopy.getOutTo().getName() + " ( "
 				+ currentCopy.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
 
-		checkOutHistory.add(tempLog);
+		alleventDetail.add(tempLog);
 
-		eventLogs.put(currentCopy, tempLog);
+		eventBYCopy.put(currentCopy, tempLog);
 
 	}
 
-	/*
-	 * public static void createMarkHoldLog(Copy activeCopy, ArrayList<Hold>
-	 * newHold) { LocalDateTime now = LocalDateTime.now(); String tempLog =
-	 * "\nA hold has been marked against a copy titled: " +
-	 * activeCopy.getTitle() + " ( " + activeCopy.getCopyID() +
-	 * " ) has been checked in by: " + currentCopy.getOutTo().getName() + " ( "
-	 * + currentCopy.getOutTo().getPatronID() + " )." + " at : " +
-	 * dateFormat.format(now) + "\n";
-	 * 
-	 * checkOutHistory.add(tempLog);
-	 * 
-	 * eventLogs.put(currentCopy, tempLog); }
-	 */
+	public static void createMarkHoldLog(Copy copyOnHold, Hold newHold)
+	{
+		LocalDateTime now = LocalDateTime.now();
+		String tempLog = "\nA hold has been marked against a copy titled: " + copyOnHold.getTitle() + " ( "
+				+ copyOnHold.getCopyID() + " ) and was checked out by: " + copyOnHold.getOutTo().getName() + " ( "
+				+ copyOnHold.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
+
+		alleventDetail.add(tempLog);
+
+		eventBYCopy.put(copyOnHold, tempLog);
+	}
+
 	public static ArrayList<String> getEventLogs()
 	{
-		return checkOutHistory;
+		return alleventDetail;
 	}
 
 }

@@ -69,6 +69,11 @@ public class TRLApp
 				{
 					// Print all hold info for each unique copy for
 					printAllHold(holdRecord);
+
+					StdOut.println(
+							"\n\n**** SORRY!, You can't check out a copy until the hold is removed from your account.**** \n**** Go Pay the fine and remove the hold ****");
+					notValidChoice = true;
+					continue;
 				}
 				else
 				{
@@ -212,7 +217,7 @@ public class TRLApp
 				// Explain the Due Date Policy
 
 				StdOut.println(
-						"\n**** Library Policies ****\nA Copy is due after 120 days from the date it is checked out.\nIf there is a hold on your account, a worker can only remove the hold when the fine is paid");
+						"\n**** Library Policies ****\nA Copy is due after 120 days from the date it is checked out.\n\nIf there is a hold on your account, a worker can only remove the hold when the fine is paid");
 				// Explain..other assumptions
 				notValidChoice = true;
 
