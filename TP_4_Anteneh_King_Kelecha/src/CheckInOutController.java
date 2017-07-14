@@ -300,14 +300,13 @@ public class CheckInOutController
 	public boolean printNotice()
 	{
 		Map<Copy, ArrayList<Hold>> tempholdStore = FakeDB.getHoldStore();
-		String overdueNotice = "";
 
 		if (!tempholdStore.isEmpty())
 		{
 			// For each copy in the hold store
 			for (Copy key : tempholdStore.keySet())
 			{
-
+				String overdueNotice = "";
 				// Find if there is any overdue hold to that copy, retrieve the
 				// info
 				for (int i = 0; i < FakeDB.getHoldRecord(key).size(); i++)
@@ -327,8 +326,10 @@ public class CheckInOutController
 				// a file
 
 				String sendTo = key.getOutTo().getName();
-
-				generateNotice(overdueNotice, sendTo);
+				if (!overdueNotice.isEmpty())
+				{
+					generateNotice(overdueNotice, sendTo);
+				}
 
 			}
 			return true;
