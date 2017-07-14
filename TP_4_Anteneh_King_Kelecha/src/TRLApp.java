@@ -36,6 +36,8 @@ public class TRLApp
 			StdOut.println("*\t\t\t\t\t   *");
 			StdOut.println("*  Press 6 : To Remove HOLDS from Students *");
 			StdOut.println("*\t\t\t\t\t   *");
+			StdOut.println("*  Press 7 : To PRINT OverDue Notice\t   *");
+			StdOut.println("*\t\t\t\t\t   *");
 			StdOut.println("*  Press 0 : To EXIT the Application\t   *");
 			StdOut.println("*\t\t\t\t\t   *");
 			StdOut.println("********************************************\n");
@@ -293,6 +295,7 @@ public class TRLApp
 
 				// TODO: Validations; ASUMPTION: for now, patron has an hold and
 				// fee
+
 				StdOut.println("Please select the type of hold to remove:");
 				String holdType = selectHoldType(trlApp);
 
@@ -309,6 +312,17 @@ public class TRLApp
 
 				notValidChoice = true;
 
+			}
+			else if (userInput.equals("7"))
+			{
+				if (trlApp.controller.printNotice())
+				{
+
+				}
+				else
+				{
+
+				}
 			}
 			else if (userInput.equals("0"))
 			{

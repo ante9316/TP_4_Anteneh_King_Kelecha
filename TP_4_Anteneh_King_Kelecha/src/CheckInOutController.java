@@ -1,5 +1,7 @@
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -293,5 +295,71 @@ public class CheckInOutController
 
 		// create event log record
 		newEvent.createRemoveHoldLog(activeCopy);
+	}
+
+	public boolean printNotice()
+	{
+		Map<Copy, ArrayList<Hold>> tempholdStore = FakeDB.getHoldStore();
+		String overdueNotice = "";
+
+		if (!tempholdStore.isEmpty())
+		{
+			// For each copy in the hold store
+			for (Copy key : tempholdStore.keySet())
+			{
+
+				// Find if there is any overdue hold to that copy, retrieve the
+				// info
+				for (int i = 0; i < FakeDB.getHoldRecord(key).size(); i++)
+				{
+					if (FakeDB.getHoldRecord(key).get(i).getHoldType().equalsIgnoreCase("overdue"))
+					{
+						overdueNotice += key.getOutTo().getName() + " you haven't returned the copy of book - "
+								+ key.getTitle() + "(" + key.getCopyID() + ")"
+								+ " and your account has been charged <<Some Purchasing Price>>. You can keep the book!\n";
+					}
+
+					StdOut.println("==++++" + key.getOutTo().getName());
+
+				}
+
+				// For each patron who has overdue hold for that copy, print
+				// a file
+
+				String sendTo = key.getOutTo().getName();
+
+				generateNotice(overdueNotice, sendTo);
+
+			}
+			return true;
+
+		}
+
+		else
+		{
+			return false;
+		}
+
+	}
+
+	protected void generateNotice(String overdueNotice, String sendTo)
+	{
+		final Formatter noticeFormater;
+		try
+		{
+			noticeFormater = new Formatter("overdueNotice_" + sendTo + ".txt");
+
+			noticeFormater.format("%s", overdueNotice);
+
+			StdOut.println("YAAAAA");
+
+			noticeFormater.close();
+
+		}
+		catch (FileNotFoundException e)
+		{
+
+			StdOut.println("Unable to create a file, please try again");
+		}
 	}
 }
