@@ -92,7 +92,7 @@ public class TRLApp
 				do
 				{
 					// validate Copies exist
-					StdOut.println("\nPlease Scan a Copy to Check Out: ");
+					StdOut.println("\nPlease Enter a Copy to Check Out: ");
 					Copy activeCopy = validateCopies(trlApp.controller);
 
 					// Check if the copy is already checked OUT by another
@@ -143,7 +143,7 @@ public class TRLApp
 
 				do
 				{
-					StdOut.println("\nPlease Scan a Copy to Check In: ");
+					StdOut.println("\nPlease Enter a Copy to Check In: ");
 					Copy activeCopy = validateCopies(trlApp.controller);
 
 					// Check if the copy is already checked OUT by any Patron
@@ -263,24 +263,15 @@ public class TRLApp
 				Copy activeCopy = validateCopies(trlApp.controller);
 
 				// validate patron
-				StdOut.println("Please Enter the Patron ID you want to mark hold against:");
 				Patron activePatron = validatePatron(trlApp.controller);
 
 				StdOut.println("Please select the type of hold to mark:");
-
-				String[] tempHoldType = trlApp.controller.getTypeOfHold();
-
-				for (int i = 0; i < tempHoldType.length; i++)
-				{
-					StdOut.println("\"" + tempHoldType[i] + "\"");
-				}
-
-				String holdType = StdIn.readLine();
+				String holdType = selectHoldType(trlApp);
 
 				StdOut.println("Please write a description or type \"None\"");
-				String description = StdIn.readLine();
+				String reason = StdIn.readLine();
 
-				if (trlApp.controller.markHold(activeCopy, activePatron, holdType, description))
+				if (trlApp.controller.markHold(activeCopy, activePatron, holdType, reason))
 				{
 					StdOut.print("A hold has been marked sucessfully!");
 				}
@@ -297,10 +288,19 @@ public class TRLApp
 				// Accept and validate patron info
 				Patron activePatron = validatePatron(trlApp.controller);
 
+				StdOut.println("\nPlease Enter a Copy you want to remove a hold for: ");
+				Copy activeCopy = validateCopies(trlApp.controller);
+
+				// TODO: Validations; ASUMPTION: for now, patron has an hold and
+				// fee
+				StdOut.println("Please select the type of hold to remove:");
+				String holdType = selectHoldType(trlApp);
+
 				// Check if the fee is paid and remove hold record
 				if (trlApp.controller.isFeePaid(activePatron))
 				{
-
+					trlApp.controller.removeHold(activeCopy, holdType);
+					StdOut.println("Hold is removed from your record successfuly!");
 				}
 				else
 				{
@@ -325,6 +325,20 @@ public class TRLApp
 		}
 		while (notValidChoice);
 
+	}
+
+	protected static String selectHoldType(TRLApp trlApp)
+	{
+
+		String[] tempHoldType = trlApp.controller.getTypeOfHold();
+
+		for (int i = 0; i < tempHoldType.length; i++)
+		{
+			StdOut.println("\"" + tempHoldType[i] + "\"");
+		}
+
+		String holdType = StdIn.readLine();
+		return holdType;
 	}
 
 	// print all holds per a copy. a copy can have multiple holds
@@ -357,7 +371,7 @@ public class TRLApp
 			activeCopy = controller.checkCopyExist(newCopyID);
 			if (activeCopy == null)
 			{
-				StdOut.println("You may have scanned an invalid copy or unavailable copy. Please try again:");
+				StdOut.println("You may have entered an invalid copy or unavailable copy. Please try again:");
 				notValidID = true;
 			}
 			else
@@ -386,7 +400,7 @@ public class TRLApp
 
 			if (activePatron == null)
 			{
-				StdOut.println("You many have scanned an invalid patron ID or unavailable patron. Please try again:");
+				StdOut.println("You many have entered an invalid patron ID or unavailable patron. Please try again:");
 				notValidID = true;
 			}
 			else

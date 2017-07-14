@@ -8,10 +8,10 @@ public class Hold
 	protected static String typeOfHold[] =
 	{ "Overdue", "Book Dumping", "Damage" };
 
-	public Hold(String reason, String typeOfHold)
+	public Hold(String typeOfHold, String reason)
 	{
-		reasonOfHold = reason;
-		holdType = typeOfHold;
+		this.reasonOfHold = reason;
+		this.holdType = typeOfHold;
 
 	}
 

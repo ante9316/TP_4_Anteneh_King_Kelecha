@@ -71,7 +71,7 @@ public class CheckInOutController
 			if (activePatron.getCopiesStillOut().contains(copyOnHold))
 			{
 				// Create new hold
-				Hold newHold = new Hold(reason, typeOfHold);
+				Hold newHold = new Hold(typeOfHold, reason);
 
 				copyOnHold.setHoldTobeAdded(newHold);
 
@@ -104,15 +104,15 @@ public class CheckInOutController
 
 		if (newHold.getHoldType().equalsIgnoreCase("Damage"))
 		{
-			newFine.applyDamageFee(activePatron);
+			newFine.applyDamageFee(activePatron, newFine);
 		}
 		else if (newHold.getHoldType().equalsIgnoreCase("Book Dumping"))
 		{
-			newFine.applyDumpingFee(activePatron);
+			newFine.applyDumpingFee(activePatron, newFine);
 		}
 		else
 		{
-			newFine.applyOverDueFee(activePatron);
+			newFine.applyOverDueFee(activePatron, newFine);
 		}
 
 	}
@@ -251,8 +251,8 @@ public class CheckInOutController
 				// Mark hold for copies overdue
 				if (tempCopyStore.get(key).getDueDate().isBefore(LocalDateTime.now()))
 				{
-					this.markHold(tempCopyStore.get(key), tempCopyStore.get(key).getOutTo(),
-							"Book is not returned on time", "overdue");
+					this.markHold(tempCopyStore.get(key), tempCopyStore.get(key).getOutTo(), "overdue",
+							"Book is not returned on time");
 				}
 			}
 		}
@@ -263,9 +263,10 @@ public class CheckInOutController
 	{
 		// code to automatically call payment whenever a worker try to remove a
 		// hold
+		FakeDB.getFineStore().get(activePatron).payment(activePatron);
 
 		// check if fee is paid
-		if (FakeDB.getFineStore().get(activePatron) == 0)
+		if (FakeDB.getFineStore().get(activePatron).fee == 0)
 		{
 
 			return true;
@@ -277,4 +278,17 @@ public class CheckInOutController
 
 	}
 
+	public void removeHold(Copy activeCopy, String holdType)
+	{
+		for (int i = 0; i < FakeDB.getHoldStore().size(); i++)
+		{
+			if (FakeDB.getHoldRecord(activeCopy).get(i).getHoldType().equalsIgnoreCase(holdType))
+			{
+				FakeDB.getHoldStore().remove(activeCopy);
+				break;
+
+			}
+
+		}
+	}
 }
