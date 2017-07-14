@@ -61,29 +61,38 @@ public class CheckInOutController
 
 	}
 
-	public boolean markHold(Copy copyOnHold, String typeOfHold, String reason)
+	public boolean markHold(Copy copyOnHold, Patron activePatron, String typeOfHold, String reason)
 	{
-		// Check if the copy ever checked out. If never checked out, no hold can
-		// be applied
-		if (copyOnHold.getOutTo() != null)
+		// Check if this patron checked out at least one copy
+		if (activePatron.getCopiesStillOut() != null)
 		{
-			// Create new hold
-			Hold newHold = new Hold(reason, typeOfHold);
+			// Check if this patron checked out this particular copy to be
+			// marked on hold
+			if (activePatron.getCopiesStillOut().contains(copyOnHold))
+			{
+				// Create new hold
+				Hold newHold = new Hold(reason, typeOfHold);
 
-			copyOnHold.setHoldTobeAdded(newHold);
+				copyOnHold.setHoldTobeAdded(newHold);
 
-			// Save this to a DB
-			FakeDB.setPatronHolds(copyOnHold, copyOnHold.getHoldTobeAdded());
+				// Save this to a DB
+				FakeDB.setPatronHolds(copyOnHold, copyOnHold.getHoldTobeAdded());
 
-			// create log record
-			newEvent.createMarkHoldLog(copyOnHold, newHold);
+				// create log record
+				newEvent.createMarkHoldLog(copyOnHold, newHold, activePatron);
 
-			return true;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		else
 		{
 			return false;
 		}
+
 	}
 
 	// Check if there is any hold in the system
@@ -97,11 +106,10 @@ public class CheckInOutController
 	// retrieve all and return the list
 	protected Map<Copy, ArrayList<Hold>> checkHoldsRecord(Patron activePatron)
 	{
-		// ArrayList<Copy> tempCopiesOut = activePatron.getCopiesStillOut();
 
 		Map<Copy, ArrayList<Hold>> tempHoldStore = new HashMap<Copy, ArrayList<Hold>>();
 
-		// Check
+		// Check if there is at least one hold record
 		if (FakeDB.getHoldStore() != null & !FakeDB.getHoldStore().isEmpty())
 		{
 			// A given copy might have two or more holds, so retrieve all
@@ -110,6 +118,7 @@ public class CheckInOutController
 			{
 				for (int i = 0; i < activePatron.getCopiesStillOut().size(); i++)
 				{
+					// check if the active patron exist in the hold store
 					if (FakeDB.getHoldStore().containsKey(activePatron.getCopiesStillOut().get(i)))
 					{
 						tempHoldStore.put(activePatron.getCopiesStillOut().get(i),
@@ -220,7 +229,8 @@ public class CheckInOutController
 				// Mark hold for copies overdue
 				if (tempCopyStore.get(key).getDueDate().isBefore(LocalDateTime.now()))
 				{
-					this.markHold(tempCopyStore.get(key), "Book is not returned on time", "overdue");
+					this.markHold(tempCopyStore.get(key), tempCopyStore.get(key).getOutTo(),
+							"Book is not returned on time", "overdue");
 				}
 			}
 		}

@@ -50,12 +50,12 @@ public class Event
 
 	}
 
-	public void createMarkHoldLog(Copy copyOnHold, Hold newHold)
+	public void createMarkHoldLog(Copy copyOnHold, Hold newHold, Patron activePatron)
 	{
 		LocalDateTime now = LocalDateTime.now();
 		String tempLog = "\nA hold has been marked against a copy titled: " + copyOnHold.getTitle() + " ( "
-				+ copyOnHold.getCopyID() + " ) and was checked out by: " + copyOnHold.getOutTo().getName() + " ( "
-				+ copyOnHold.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
+				+ copyOnHold.getCopyID() + " ) and was checked out by: " + activePatron.getName() + " ( "
+				+ activePatron.getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
 
 		alleventDetail.add(tempLog);
 

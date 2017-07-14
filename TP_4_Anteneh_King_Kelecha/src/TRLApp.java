@@ -246,11 +246,15 @@ public class TRLApp
 						"*Note:\"Overdue\" hold is automatically marked on Students with overdue copies.*\nFor other type of holds, "
 								+ "Please Enter the Copy ID :");
 
-				// Mark hold on all patron with overdue copies
+				// Mark hold on all patrons with overdue copies
 				trlApp.controller.markHoldOnOverDueCopies();
 
 				// validate copies
 				Copy activeCopy = validateCopies(trlApp.controller);
+
+				// validate patron
+				StdOut.println("Please Enter the Patron ID you want to mark hold against:");
+				Patron activePatron = validatePatron(trlApp.controller);
 
 				StdOut.println("Please select the type of hold to mark:");
 
@@ -266,7 +270,7 @@ public class TRLApp
 				StdOut.println("Please write a description or type \"None\"");
 				String description = StdIn.readLine();
 
-				if (trlApp.controller.markHold(activeCopy, holdType, description))
+				if (trlApp.controller.markHold(activeCopy, activePatron, holdType, description))
 				{
 					StdOut.print("A hold has been marked sucessfully!");
 				}
