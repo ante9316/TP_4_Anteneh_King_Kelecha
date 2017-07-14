@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class CheckInOutController
 {
+	Event newEvent = new Event();
 
 	protected void checkOut(Patron activePatron, Copy copyToCheckOut)
 	{
@@ -21,19 +22,19 @@ public class CheckInOutController
 
 		copyToCheckOut.setDueDate(dueDate);
 
-		// create log record
-		Event.createCheckOutLog(copyToCheckOut, now);
+		// create event instance
+
+		newEvent.createCheckOutLog(copyToCheckOut, now);
 
 	}
 
 	protected void checkIn(Patron activePatron, Copy copyToCheckIn)
 	{
 
-		// create log record
-		Event.createCheckInLog(copyToCheckIn);
+		// create event instance
+		newEvent.createCheckInLog(copyToCheckIn);
 
 		// remove CopyOut property from Patron record
-
 		activePatron.getCopiesStillOut().remove(copyToCheckIn);
 
 		// remove OutTo property from Copy record
@@ -43,7 +44,7 @@ public class CheckInOutController
 
 	protected ArrayList<String> printEventLog()
 	{
-		return Event.getEventLogs();
+		return newEvent.getEventLogs();
 	}
 
 	protected Map<String, Patron> printAllPatrons()
@@ -75,7 +76,7 @@ public class CheckInOutController
 			FakeDB.setPatronHolds(copyOnHold, copyOnHold.getHoldTobeAdded());
 
 			// create log record
-			Event.createMarkHoldLog(copyOnHold, newHold);
+			newEvent.createMarkHoldLog(copyOnHold, newHold);
 
 			return true;
 		}

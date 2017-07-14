@@ -6,42 +6,51 @@ import java.util.Map;
 
 public class Event
 {
-	private static Map<Object, Object> eventByCopy;
-	private static ArrayList<String> alleventDetail = new ArrayList<String>();
-	static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-	static
-	{
-		eventByCopy = new HashMap<Object, Object>();
 
+	private Map<Copy, String> eventByCopy;
+	private Map<Patron, String> eventByPatron;
+	private Map<Hold, String> eventByHold;
+	private ArrayList<String> alleventDetail;
+
+	private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
+	public Event()
+	{
+		this.eventByCopy = new HashMap<Copy, String>();
+		this.eventByPatron = new HashMap<Patron, String>();
+		this.eventByHold = new HashMap<Hold, String>();
+		this.alleventDetail = new ArrayList<String>();
 	}
 
-	public static void createCheckOutLog(Copy currentCopy, LocalDateTime now)
+	public void createCheckOutLog(Copy copyCheckedOut, LocalDateTime now)
 	{
 
-		String tempLog = "\nA copy titled: " + currentCopy.getTitle() + " ( " + currentCopy.getCopyID()
-				+ " ) has been checked out to a patron: " + currentCopy.getOutTo().getName() + " ( "
-				+ currentCopy.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now)
-				+ " with a DUE DATE of 120 days: " + dateFormat.format(currentCopy.getDueDate()) + "\n";
+		String tempLog = "\nA copy titled: " + copyCheckedOut.getTitle() + " ( " + copyCheckedOut.getCopyID()
+				+ " ) has been checked out to a patron: " + copyCheckedOut.getOutTo().getName() + " ( "
+				+ copyCheckedOut.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now)
+				+ " with a DUE DATE of 120 days: " + dateFormat.format(copyCheckedOut.getDueDate()) + "\n";
 
 		alleventDetail.add(tempLog);
 
-		eventByCopy.put(currentCopy, tempLog);
+		eventByCopy.put(copyCheckedOut, tempLog);
+		eventByPatron.put(copyCheckedOut.getOutTo(), tempLog);
+
 	}
 
-	public static void createCheckInLog(Copy currentCopy)
+	public void createCheckInLog(Copy copyCheckedIn)
 	{
 		LocalDateTime now = LocalDateTime.now();
-		String tempLog = "\nA copy titled: " + currentCopy.getTitle() + " ( " + currentCopy.getCopyID()
-				+ " ) has been checked in by: " + currentCopy.getOutTo().getName() + " ( "
-				+ currentCopy.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
+		String tempLog = "\nA copy titled: " + copyCheckedIn.getTitle() + " ( " + copyCheckedIn.getCopyID()
+				+ " ) has been checked in by: " + copyCheckedIn.getOutTo().getName() + " ( "
+				+ copyCheckedIn.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now) + "\n";
 
 		alleventDetail.add(tempLog);
-
-		eventByCopy.put(currentCopy, tempLog);
+		eventByPatron.put(copyCheckedIn.getOutTo(), tempLog);
+		eventByCopy.put(copyCheckedIn, tempLog);
 
 	}
 
-	public static void createMarkHoldLog(Copy copyOnHold, Hold newHold)
+	public void createMarkHoldLog(Copy copyOnHold, Hold newHold)
 	{
 		LocalDateTime now = LocalDateTime.now();
 		String tempLog = "\nA hold has been marked against a copy titled: " + copyOnHold.getTitle() + " ( "
@@ -51,9 +60,11 @@ public class Event
 		alleventDetail.add(tempLog);
 
 		eventByCopy.put(copyOnHold, tempLog);
+		eventByPatron.put(copyOnHold.getOutTo(), tempLog);
+		eventByHold.put(newHold, tempLog);
 	}
 
-	public static ArrayList<String> getEventLogs()
+	public ArrayList<String> getEventLogs()
 	{
 		return alleventDetail;
 	}
