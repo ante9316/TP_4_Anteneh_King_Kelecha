@@ -35,7 +35,7 @@ public class CheckInOutController
 		newEvent.createCheckInLog(copyToCheckIn);
 
 		// remove CopyOut property from Patron record
-		activePatron.getCopiesStillOut().remove(copyToCheckIn);
+		// activePatron.getCopiesStillOut().remove(copyToCheckIn);
 
 		// remove OutTo property from Copy record
 		copyToCheckIn.setOutTo(null);
@@ -97,22 +97,29 @@ public class CheckInOutController
 	// retrieve all and return the list
 	protected Map<Copy, ArrayList<Hold>> checkHoldsRecord(Patron activePatron)
 	{
-		ArrayList<Copy> tempCopiesOut = activePatron.getCopiesStillOut();
+		// ArrayList<Copy> tempCopiesOut = activePatron.getCopiesStillOut();
 
 		Map<Copy, ArrayList<Hold>> tempHoldStore = new HashMap<Copy, ArrayList<Hold>>();
 
-		if (tempCopiesOut != null)
+		// Check
+		if (FakeDB.getHoldStore() != null & !FakeDB.getHoldStore().isEmpty())
 		{
-			for (int i = 0; i < tempCopiesOut.size(); i++)
+			// A given copy might have two or more holds, so retrieve all
+			// holds and return
+			if (activePatron.getCopiesStillOut() != null)
 			{
-				// A given copy might have two or more holds, so retrieve all
-				// holds and return
-				if (FakeDB.getHoldStore().containsKey(tempCopiesOut.get(i)))
+				for (int i = 0; i < activePatron.getCopiesStillOut().size(); i++)
 				{
-					tempHoldStore.put(tempCopiesOut.get(i), FakeDB.getHoldRecord(tempCopiesOut.get(i)));
-
+					if (FakeDB.getHoldStore().containsKey(activePatron.getCopiesStillOut().get(i)))
+					{
+						tempHoldStore.put(activePatron.getCopiesStillOut().get(i),
+								FakeDB.getHoldRecord(activePatron.getCopiesStillOut().get(i)));
+					}
 				}
-
+			}
+			else
+			{
+				return tempHoldStore;
 			}
 
 			return tempHoldStore;
@@ -172,15 +179,19 @@ public class CheckInOutController
 
 	public String printCheckedOutCopies(Patron activePatron)
 	{
-		String copiesCheckedOut = "";
+		String copiesCheckedOut = null;
 		ArrayList<Copy> tempCopiesOut = activePatron.getCopiesStillOut();
 
 		if (activePatron.getCopiesStillOut() != null)
 		{
+
 			for (int i = 0; i < tempCopiesOut.size(); i++)
 			{
-				copiesCheckedOut += tempCopiesOut.get(i).getTitle() + " ( " + tempCopiesOut.get(i).getCopyID() + " )\n";
-
+				if (tempCopiesOut.get(i).getOutTo() != null)
+				{
+					copiesCheckedOut += tempCopiesOut.get(i).getTitle() + " ( " + tempCopiesOut.get(i).getCopyID()
+							+ " )\n";
+				}
 			}
 			return copiesCheckedOut;
 		}
