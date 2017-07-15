@@ -1,4 +1,4 @@
-Eric you haven't returned the copy of book - Fun with Objects(C1) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
-Eric you haven't returned the copy of book - Fun with Objects(C1) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
 Eric you haven't returned the copy of book - More Fun with Objects(C2) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
 Eric you haven't returned the copy of book - More Fun with Objects(C2) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
+Eric you haven't returned the copy of book - Fun with Objects(C1) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
+Eric you haven't returned the copy of book - Fun with Objects(C1) and your account has been charged <<Some Purchasing Price>>. You can keep the book!
