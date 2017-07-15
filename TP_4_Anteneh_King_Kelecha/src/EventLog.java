@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Event
+public class EventLog
 {
 
 	private Map<Copy, String> eventByCopy;
@@ -14,7 +14,7 @@ public class Event
 
 	private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
-	public Event()
+	public EventLog()
 	{
 		this.eventByCopy = new HashMap<Copy, String>();
 		this.eventByPatron = new HashMap<Patron, String>();
@@ -22,9 +22,9 @@ public class Event
 		this.alleventDetail = new ArrayList<String>();
 	}
 
-	public void createCheckOutLog(Copy copyCheckedOut, LocalDateTime now)
+	public void createCheckOutLog(Copy copyCheckedOut)
 	{
-
+		LocalDateTime now = LocalDateTime.now();
 		String tempLog = "\nA copy titled: " + copyCheckedOut.getTitle() + " ( " + copyCheckedOut.getCopyID()
 				+ " ) has been checked out to a patron: " + copyCheckedOut.getOutTo().getName() + " ( "
 				+ copyCheckedOut.getOutTo().getPatronID() + " )." + " at : " + dateFormat.format(now)

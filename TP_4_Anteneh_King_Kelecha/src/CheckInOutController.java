@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CheckInOutController
 {
-	Event newEvent = new Event();
+	EventLog newEvent = new EventLog();
 
 	protected void checkOut(Patron activePatron, Copy copyToCheckOut)
 	{
@@ -19,14 +19,13 @@ public class CheckInOutController
 		copyToCheckOut.setOutTo(activePatron);
 
 		// Set a due date
-		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime dueDate = LocalDateTime.now().plusDays(120);
 
 		copyToCheckOut.setDueDate(dueDate);
 
 		// create event instance
 
-		newEvent.createCheckOutLog(copyToCheckOut, now);
+		newEvent.createCheckOutLog(copyToCheckOut);
 
 	}
 
@@ -66,55 +65,52 @@ public class CheckInOutController
 	public boolean markHold(Copy copyOnHold, Patron activePatron, String typeOfHold, String reason)
 	{
 		// Check if this patron checked out at least one copy
-		if (activePatron.getCopiesStillOut() != null)
-		{
-			// Check if this patron checked out this particular copy to be
-			// marked on hold
-			if (activePatron.getCopiesStillOut().contains(copyOnHold))
-			{
-				// Create new hold
-				Hold newHold = new Hold(typeOfHold, reason);
-
-				copyOnHold.setHoldTobeAdded(newHold);
-
-				// Save this to a DB
-				FakeDB.setPatronHolds(copyOnHold, copyOnHold.getHoldTobeAdded());
-
-				// create log record
-				newEvent.createMarkHoldLog(copyOnHold, newHold, activePatron);
-
-				// Attach fine with the hold
-				applyFine(activePatron, newHold);
-
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
+		if (activePatron.getCopiesStillOut() == null)
 		{
 			return false;
 		}
 
+		// Check if this patron checked out this particular copy to be
+		// marked on hold
+		if (!(activePatron.getCopiesStillOut().contains(copyOnHold)))
+		{
+			return false;
+		}
+
+		// Create new hold
+		Hold newHold = new Hold(typeOfHold, reason);
+
+		copyOnHold.setHoldTobeAdded(newHold);
+
+		// Save this to a DB
+		FakeDB.setPatronHolds(copyOnHold, copyOnHold.getCopyHolds());
+
+		// create log record
+		newEvent.createMarkHoldLog(copyOnHold, newHold, activePatron);
+
+		// Attach fine with the hold
+		applyFine(activePatron, newHold);
+
+		return true;
+
 	}
 
-	private void applyFine(Patron activePatron, Hold newHold)
+	public void applyFine(Patron activePatron, Hold newHold)
 	{
 		Fine newFine = new Fine();
+		String holdType = newHold.getHoldType();
 
-		if (newHold.getHoldType().equalsIgnoreCase("Damage"))
+		if (holdType.equalsIgnoreCase("Damage"))
 		{
-			newFine.applyDamageFee(activePatron, newFine);
+			newFine.applyDamageFee(activePatron);
 		}
-		else if (newHold.getHoldType().equalsIgnoreCase("Book Dumping"))
+		else if (holdType.equalsIgnoreCase("Book Dumping"))
 		{
-			newFine.applyDumpingFee(activePatron, newFine);
+			newFine.applyDumpingFee(activePatron);
 		}
-		else
+		else if (holdType.equalsIgnoreCase("Overdue"))
 		{
-			newFine.applyOverDueFee(activePatron, newFine);
+			newFine.applyOverDueFee(activePatron);
 		}
 
 	}
@@ -163,18 +159,6 @@ public class CheckInOutController
 			return null;
 		}
 
-	}
-
-	public Copy createCopy()
-	{
-
-		return new Copy();
-	}
-
-	public Patron createPatron()
-	{
-
-		return new Patron();
 	}
 
 	protected Patron checkPatronExist(String newPatronID)
@@ -241,7 +225,7 @@ public class CheckInOutController
 
 	}
 
-	public void markHoldOnOverDueCopies()
+	public void markHold()
 	{
 		Map<String, Copy> tempCopyStore = FakeDB.getCopyStore();
 
@@ -319,8 +303,6 @@ public class CheckInOutController
 								+ " and your account has been charged <<Some Purchasing Price>>. You can keep the book!\n";
 					}
 
-					StdOut.println("==++++" + key.getOutTo().getName());
-
 				}
 
 				// For each patron who has overdue hold for that copy, print
@@ -350,8 +332,6 @@ public class CheckInOutController
 			noticeFormater = new Formatter("overdueNotice_" + sendTo + ".txt");
 
 			noticeFormater.format("%s", overdueNotice);
-
-			StdOut.println("YAAAAA");
 
 			noticeFormater.close();
 

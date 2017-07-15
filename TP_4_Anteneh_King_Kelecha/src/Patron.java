@@ -17,11 +17,6 @@ public class Patron
 
 	}
 
-	public Patron()
-	{
-
-	}
-
 	public String getName()
 	{
 		return name;

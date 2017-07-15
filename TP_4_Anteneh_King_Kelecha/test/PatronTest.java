@@ -1,93 +1,49 @@
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.time.LocalDateTime;
 
 import org.junit.Test;
 
 public class PatronTest
 {
-
 	@Test
-	public void testGetPatronID()
+	public void testNew()
 	{
-		Patron testPatron = createPatron();
-		assertEquals("P1", testPatron.getPatronID());
-
-	}
-
-	@Test
-	public void testGetPatronName()
-	{
-		Patron testPatron = createPatron();
-		assertEquals("Eric", testPatron.getName());
+		Patron p1 = new Patron("P5", "AFBHERRA");
+		assertTrue(p1.getPatronID() == "P5");
+		assertTrue(p1.getName() == "AFBHERRA");
+		assertTrue(p1.getCopiesStillOut() == null);
 
 	}
 
 	@Test
-	public void testPrintAllPatronRecords()
+	public void testSetName()
 	{
-		CheckInOutController newTransaction = createTransaction();
-		assertEquals(FakeDB.getPatronStore(), newTransaction.printAllPatrons());
-
+		Patron p1 = new Patron("P5", "AFBHERRA");
+		p1.setName("Bob");
+		assertTrue(p1.getName() == "Bob");
 	}
 
 	@Test
-	public void testPrintAllCopyRecords()
+	public void testSetID()
 	{
-		CheckInOutController newTransaction = createTransaction();
-		assertEquals(FakeDB.getCopyStore(), newTransaction.printAllCopies());
-
+		Patron p1 = new Patron("P5", "AFBHERRA");
+		p1.setPatronID("P23573");
+		assertTrue(p1.getPatronID() == "P23573");
 	}
 
 	@Test
-	public void testCheckOut()
+	public void testCopiesOut()
 	{
-		Patron testPatron = createPatron();
-		Copy testCopy = createCopy();
-		CheckInOutController newTransaction = createTransaction();
-		newTransaction.checkOut(testPatron, testCopy);
-		assertTrue(testPatron.getCopiesStillOut().contains(testCopy));
-	}
+		Patron p1 = new Patron("P1", "Bob");
+		Copy c1 = new Copy("C1", "Morning");
+		Copy c2 = new Copy("C2", "Night");
 
-	@Test
-	public void testCheckIn()
-	{
-		Patron testPatron = createPatron();
-		Copy testCopy = createCopy();
-		CheckInOutController newTransaction = createTransaction();
-		newTransaction.checkOut(testPatron, testCopy);
-		assertTrue(!testPatron.getCopiesStillOut().contains(testPatron));
-	}
+		p1.setCopiesStillOut(p1, c1);
+		assertTrue(p1.getCopiesStillOut().get(0) == c1);
 
-	@Test
-	public void testHold()
-	{
-		Patron testPatron = createPatron();
-		Copy testCopy = createCopy();
-		CheckInOutController newTransaction = createTransaction();
-		newTransaction.checkOut(testPatron, testCopy);
+		p1.setCopiesStillOut(p1, c2);
+		assertTrue(p1.getCopiesStillOut().size() == 2);
 
-		testCopy.setDueDate(LocalDateTime.now().minusDays(2));
-
-		newTransaction.markHoldOnOverDueCopies();
-		assertTrue(FakeDB.getHoldStore().containsKey(testCopy));
-	}
-
-	private CheckInOutController createTransaction()
-	{
-		return new CheckInOutController();
-	}
-
-	private Copy createCopy()
-	{
-		return FakeDB.getCopy("C1");
-	}
-
-	protected Patron createPatron()
-	{
-		return FakeDB.getPatron("P1");
+		// check that cannot do copies that are already checked out
 
 	}
-
 }

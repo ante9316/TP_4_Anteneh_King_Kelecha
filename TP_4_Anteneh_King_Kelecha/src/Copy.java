@@ -7,7 +7,7 @@ public class Copy
 	private String title;
 	private Patron outTo;
 	private LocalDateTime dueDate;
-	protected ArrayList<Hold> holdTobeAdded = new ArrayList<Hold>();
+	protected ArrayList<Hold> copyHolds = new ArrayList<Hold>();
 
 	public Copy(String copyID, String title)
 	{
@@ -15,11 +15,6 @@ public class Copy
 		this.copyID = copyID;
 		this.title = title;
 		this.dueDate = LocalDateTime.now();
-
-	}
-
-	public Copy()
-	{
 
 	}
 
@@ -40,12 +35,6 @@ public class Copy
 		return "Copy Title: " + this.getTitle() + " & Copy ID: " + this.getCopyID();
 
 	}
-
-	public String toString(Patron patron)
-	{
-		return "Copy Title: " + this.getTitle() + " & Copy ID: ";
-	}
-
 	// generate getters and setters using Eclipse Source menu
 
 	public String getCopyID()
@@ -78,13 +67,18 @@ public class Copy
 		this.outTo = outTo;
 	}
 
-	protected ArrayList<Hold> getHoldTobeAdded()
+	protected ArrayList<Hold> getCopyHolds()
 	{
-		return this.holdTobeAdded;
+		return this.copyHolds;
 	}
 
 	protected void setHoldTobeAdded(Hold newHold)
 	{
-		this.holdTobeAdded.add(newHold);
+		this.copyHolds.add(newHold);
+	}
+
+	protected void setHoldTobeRemoved(Hold removeHold)
+	{
+		this.copyHolds.remove(removeHold);
 	}
 }

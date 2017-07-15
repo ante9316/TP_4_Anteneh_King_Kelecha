@@ -6,7 +6,7 @@ public class Hold
 	protected String holdType;
 
 	protected static String typeOfHold[] =
-	{ "Overdue", "Book Dumping", "Damage" };
+	{ "Overdue", "Book Dumping", "Damage", "Other" };
 
 	public Hold(String typeOfHold, String reason)
 	{
