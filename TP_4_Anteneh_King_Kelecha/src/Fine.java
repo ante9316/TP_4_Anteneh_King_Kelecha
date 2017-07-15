@@ -6,14 +6,27 @@ public class Fine
 	protected static final double OVERDUE_FEE = 2.5;
 	protected static final double DUMPING_FEE = 1.5;
 
+	protected static double getFine(String holdType)
+	{
+		if (holdType.equalsIgnoreCase("damage"))
+			return DAMAGE_FEE;
+
+		else if (holdType.equalsIgnoreCase("dumping"))
+		{
+			return DUMPING_FEE;
+		}
+		else
+		{
+			return OVERDUE_FEE;
+		}
+	}
+
 	public void applyDamageFee(Patron activePatron)
 	{
 		this.fee = DAMAGE_FEE;
 		this.patronWithFee = activePatron;
 		FakeDB.fineStore.put(this.patronWithFee, this);
 
-		// StdOut.println("FEE= " +
-		// FakeDB.fineStore.get(this.patronWithFee).fee);
 	}
 
 	public void applyDumpingFee(Patron activePatron)
@@ -22,8 +35,6 @@ public class Fine
 		this.patronWithFee = activePatron;
 		FakeDB.fineStore.put(this.patronWithFee, this);
 
-		// StdOut.println("FEE= " +
-		// FakeDB.fineStore.get(this.patronWithFee).fee);
 	}
 
 	public void applyOverDueFee(Patron activePatron)
@@ -32,15 +43,6 @@ public class Fine
 		this.patronWithFee = activePatron;
 		FakeDB.fineStore.put(this.patronWithFee, this);
 
-		// StdOut.println("FEE= " +
-		// FakeDB.fineStore.get(this.patronWithFee).fee);
-	}
-
-	public double getFines()
-	{
-		double totalFines = 0;
-
-		return totalFines;
 	}
 
 	public boolean finePaid()
